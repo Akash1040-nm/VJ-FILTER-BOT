@@ -248,7 +248,7 @@ Nᴀᴍᴇ - {}"""
 
 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 <b>: {}</b>"""
 
-    CAPTION = """<b>📂 Fɪʟᴇɴᴀᴍᴇ:</b> <a href="https://t.me/your_channel_username">{file_name}</a>
+    CAPTION = """<b>📂 Fɪʟᴇɴᴀᴍᴇ:</b> <a href="https://t.me/RK_Movies8">{file_name}</a>
 
 <b>⚙️ Size:</b> {file_size}""" 
 
