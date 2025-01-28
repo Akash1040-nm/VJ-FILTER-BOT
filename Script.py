@@ -248,9 +248,9 @@ Nᴀᴍᴇ - {}"""
 
 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 <b>: {}</b>"""
 
-    CAPTION = """<b>📂Fɪʟᴇɴᴀᴍᴇ : {file_name}
+    CAPTION = """<b>📂 Fɪʟᴇɴᴀᴍᴇ:</b> <a href="https://t.me/your_channel_username">{file_name}</a>
 
-<b> Size ⚙️: {file_size}</b>""" 
+<b>⚙️ Size:</b> {file_size}""" 
 
     IMDB_TEMPLATE_TXT = """
 <b>Query: {qurey}
