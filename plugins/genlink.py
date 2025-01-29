@@ -38,7 +38,7 @@ async def gen_link_batch(bot, message):
     if " " not in message.text:
         return await message.reply("Use correct format.\nExample <code>/batch https://t.me/rk_movies8/9 https://t.me/RK_Movies8/85</code>.")
     links = message.text.strip().split(" ")
-    if len(links) != 3:
+    if len(links) > 2:
         return await message.reply("Use correct format.\nExample <code>/batch https://t.me/rk_movies8/9 https://t.me/rk_movies8/94</code>.")
     cmd, first, last = links
     regex = re.compile("(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$")
