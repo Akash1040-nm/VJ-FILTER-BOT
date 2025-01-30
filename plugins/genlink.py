@@ -33,7 +33,7 @@ async def gen_link_s(bot, message):
         enums.MessageMediaType.PHOTO  # Now supports images/photos
     ]
 
-    # Ensure that the message contains valid media
+    # If the message does not contain valid media
     if not vj.media_group_id and vj.media not in allowed_media_types:
         return await vj.reply("Please send only photos, videos, audio files, or documents.")
 
@@ -48,6 +48,8 @@ async def gen_link_s(bot, message):
         file_type = msg.media
         if file_type in allowed_media_types:
             file = getattr(msg, file_type.value)  # Get the actual file object
+            
+            # Extract file_id properly for each file
             file_id, ref = unpack_new_file_id(file.file_id)
 
             # Generate the link format
@@ -55,7 +57,8 @@ async def gen_link_s(bot, message):
             string += file_id
             outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
 
-            links.append(f"https://t.me/{temp.U_NAME}?start={outstr}")
+            # Append generated link to the list
+            links.append(f"📂 **{getattr(file, 'file_name', 'File')}**\n🔗 [Click Here](https://t.me/{temp.U_NAME}?start={outstr})\n")
 
-    # Send the generated links in one message
-    await message.reply("Here are your links:\n" + "\n".join(links))
+    # Send all generated links in one message
+    await message.reply("**Here are your generated links:**\n\n" + "\n".join(links), disable_web_page_preview=True)
