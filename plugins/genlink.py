@@ -94,7 +94,3 @@ async def gen_link_batch(bot, message):
     # Generate a batch link for all files
     file_id, ref = unpack_new_file_id(post.document.file_id)
     await message.reply(f"Here is your link\nContains `{len(all_file_ids)}` files.\n https://t.me/{temp.U_NAME}?start=BATCH-{file_id}")
-
-
-
-Explain this
