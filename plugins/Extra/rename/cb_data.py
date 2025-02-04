@@ -38,7 +38,7 @@ async def doc(bot, update):
             path = await bot.download_media(
                     message=file,
                     progress=progress_for_pyrogram,
-                    progress_args=("**⚠️ Please wait VJ Hack is in processing**", ms, c_time))
+                    progress_args=("**⚠️ Please wait RK Hack is in processing**", ms, c_time))
         except Exception as e:
             await ms.edit(e)
             return 
