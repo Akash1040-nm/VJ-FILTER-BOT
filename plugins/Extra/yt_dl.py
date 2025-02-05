@@ -1,160 +1,133 @@
 from __future__ import unicode_literals
 
-import os
-import requests
-import asyncio
-import re
-from pyrogram import Client, filters
+import os, requests, asyncio, math, time, wget
+from pyrogram import filters, Client
 from pyrogram.types import Message
+
 from youtube_search import YoutubeSearch
-from youtubesearchpython import VideosSearch
+from youtubesearchpython import SearchVideos
 from yt_dlp import YoutubeDL
 
-# 🔹 Replace with your Telegram API credentials
-API_ID = "YOUR_API_ID"  # Get from my.telegram.org
-API_HASH = "YOUR_API_HASH"  # Get from my.telegram.org
-BOT_TOKEN = "YOUR_BOT_TOKEN"  # Get from @BotFather
 
-# 🔹 Initialize the bot
-app = Client("YouTubeBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-
-
-# 🔹 Function to create a safe filename
-def safe_filename(title):
-    return re.sub(r'[^A-Za-z0-9]+', '_', title)[:40]
-
-
-# 🔹 Function to convert duration string to seconds
-def duration_to_seconds(duration):
-    return sum(int(x) * (60 ** i) for i, x in enumerate(reversed(duration.split(":"))))
-
-
-# 🔹 Command to download songs (MP3)
-@app.on_message(filters.command(["song", "mp3"]) & filters.private)
+@Client.on_message(filters.command(['song', 'mp3']) & filters.private)
 async def song(client, message):
-    query = " ".join(message.command[1:])
-    if not query:
-        return await message.reply("⚡ **Usage:** `/song song name`")
-
-    m = await message.reply(f"🔍 Searching for **{query}**...")
-
+    user_id = message.from_user.id 
+    user_name = message.from_user.first_name 
+    rpk = "["+user_name+"](tg://user?id="+str(user_id)+")"
+    query = ''
+    for i in message.command[1:]:
+        query += ' ' + str(i)
+    print(query)
+    m = await message.reply(f"**ѕєαrchíng чσur ѕσng...!\n {query}**")
+    ydl_opts = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
-        if not results:
-            return await m.edit("❌ No results found. Try another song!")
-
         link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = safe_filename(results[0]['title'])
-        duration = results[0]['duration']
-        thumbnail_url = results[0]['thumbnails'][0]
-
-        # Download the thumbnail
-        thumb_name = f"thumb_{title}.jpg"
-        with open(thumb_name, "wb") as thumb_file:
-            thumb_file.write(requests.get(thumbnail_url).content)
-
+        title = results[0]["title"][:40]       
+        thumbnail = results[0]["thumbnails"][0]
+        thumb_name = f'thumb{title}.jpg'
+        thumb = requests.get(thumbnail, allow_redirects=True)
+        open(thumb_name, 'wb').write(thumb.content)
+        performer = f"[VJ NETWORKS™]" 
+        duration = results[0]["duration"]
+        url_suffix = results[0]["url_suffix"]
+        views = results[0]["views"]
     except Exception as e:
-        return await m.edit(f"🚫 Error: `{str(e)}`")
+        print(str(e))
+        return await m.edit("Example: /song vaa vaathi song")
 
-    await m.edit("⬇️ Downloading song...")
-
+    await m.edit("**dσwnlσαdíng чσur ѕσng...!**")
     try:
-        ydl_opts = {"format": "bestaudio/best", "outtmpl": f"{title}.m4a"}
         with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=True)
-            audio_file = f"{info_dict['id']}.m4a"
+            info_dict = ydl.extract_info(link, download=False)
+            audio_file = ydl.prepare_filename(info_dict)
+            ydl.process_info(info_dict)
 
-        dur = duration_to_seconds(duration)
-
+        cap = "**BY›› [VJ NETWORKS™](https://t.me/vj_bots)**"
+        secmul, dur, dur_arr = 1, 0, duration.split(':')
+        for i in range(len(dur_arr)-1, -1, -1):
+            dur += (int(dur_arr[i]) * secmul)
+            secmul *= 60
         await message.reply_audio(
             audio_file,
-            caption=f"🎵 **Song:** {title}\n🔗 [YouTube]({link})",
+            caption=cap,            
+            quote=False,
             title=title,
             duration=dur,
-            performer="VJ NETWORKS™",
+            performer=performer,
             thumb=thumb_name
-        )
-
+        )            
         await m.delete()
-
     except Exception as e:
-        return await m.edit(f"🚫 Download failed: `{str(e)}`")
+        await m.edit("**🚫 𝙴𝚁𝚁𝙾𝚁 🚫**")
+        print(e)
+    try:
+        os.remove(audio_file)
+        os.remove(thumb_name)
+    except Exception as e:
+        print(e)
 
-    finally:
-        for file in [audio_file, thumb_name]:
-            if os.path.exists(file):
-                os.remove(file)
+def get_text(message: Message) -> [None,str]:
+    text_to_return = message.text
+    if message.text is None:
+        return None
+    if " " not in text_to_return:
+        return None
+    try:
+        return message.text.split(None, 1)[1]
+    except IndexError:
+        return None
 
 
-# 🔹 Function to extract text after command
-def get_text(message: Message):
-    return message.text.split(None, 1)[1] if message.text and " " in message.text else None
-
-
-# 🔹 Command to download videos (MP4)
-@app.on_message(filters.command(["video", "mp4"]) & filters.private)
+@Client.on_message(filters.command(["video", "mp4"]))
 async def vsong(client, message: Message):
-    query = get_text(message)
-    if not query:
-        return await message.reply("⚡ **Usage:** `/video video name`")
-
-    m = await message.reply(f"🔍 Searching for **{query}**...")
-
+    urlissed = get_text(message)
+    pablo = await client.send_message(message.chat.id, f"**𝙵𝙸𝙽𝙳𝙸𝙽𝙶 𝚈𝙾𝚄𝚁 𝚅𝙸𝙳𝙴𝙾** `{urlissed}`")
+    if not urlissed:
+        return await pablo.edit("Example: /video Your video link")     
+    search = SearchVideos(f"{urlissed}", offset=1, mode="dict", max_results=1)
+    mi = search.result()
+    mio = mi["search_result"]
+    mo = mio[0]["link"]
+    thum = mio[0]["title"]
+    fridayz = mio[0]["id"]
+    mio[0]["channel"]
+    kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
+    await asyncio.sleep(0.6)
+    url = mo
+    sedlyf = wget.download(kekme)
+    opts = {
+        "format": "best",
+        "addmetadata": True,
+        "key": "FFmpegMetadata",
+        "prefer_ffmpeg": True,
+        "geo_bypass": True,
+        "nocheckcertificate": True,
+        "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
+        "outtmpl": "%(id)s.mp4",
+        "logtostderr": False,
+        "quiet": True,
+    }
     try:
-        search = VideosSearch(query, limit=1)
-        results = search.result()["result"]
-
-        if not results:
-            return await m.edit("❌ No video found. Try another search!")
-
-        video_url = results[0]["link"]
-        video_title = safe_filename(results[0]["title"])
-        video_id = results[0]["id"]
-        thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-
-        # Download the thumbnail
-        thumb_name = f"thumb_{video_title}.jpg"
-        with open(thumb_name, "wb") as thumb_file:
-            thumb_file.write(requests.get(thumbnail_url).content)
-
+        with YoutubeDL(opts) as ytdl:
+            ytdl_data = ytdl.extract_info(url, download=True)
     except Exception as e:
-        return await m.edit(f"🚫 Error: `{str(e)}`")
+        return await pablo.edit_text(f"**𝙳𝚘𝚠𝚗𝚕𝚘𝚊𝚍 𝙵𝚊𝚒𝚕𝚎𝚍 𝙿𝚕𝚎𝚊𝚜𝚎 𝚃𝚛𝚢 𝙰𝚐𝚊𝚒𝚗..♥️** \n**Error :** `{str(e)}`")       
 
-    await m.edit("⬇️ Downloading video...")
+    file_stark = f"{ytdl_data['id']}.mp4"
+    capy = f"""**𝚃𝙸𝚃𝙻𝙴 :** [{thum}]({mo})\n**𝚁𝙴𝚀𝚄𝙴𝚂𝚃𝙴𝙳 𝙱𝚈 :** {message.from_user.mention}"""
 
-    try:
-        ydl_opts = {"format": "best", "outtmpl": f"{video_id}.mp4"}
-        with YoutubeDL(ydl_opts) as ytdl:
-            ytdl_data = ytdl.extract_info(video_url, download=True)
-
-        video_file = f"{ytdl_data['id']}.mp4"
-
-        # Check file size before uploading
-        file_size = os.path.getsize(video_file) / (1024 * 1024)
-        if file_size > 2000:  # 2GB limit for Telegram
-            return await message.reply("🚫 Video too large to upload.")
-
-        await client.send_video(
-            message.chat.id,
-            video=open(video_file, "rb"),
-            duration=int(ytdl_data["duration"]),
-            file_name=str(ytdl_data["title"]),
-            thumb=thumb_name,
-            caption=f"🎬 **Title:** {video_title}\n🔗 [YouTube]({video_url})",
-            supports_streaming=True,
-            reply_to_message_id=message.id
-        )
-
-        await m.delete()
-
-    except Exception as e:
-        return await m.edit(f"🚫 Download failed: `{str(e)}`")
-
-    finally:
-        for file in [video_file, thumb_name]:
-            if os.path.exists(file):
-                os.remove(file)
-
-
-# 🔹 Run the bot
-app.run()
+    await client.send_video(
+        message.chat.id,
+        video=open(file_stark, "rb"),
+        duration=int(ytdl_data["duration"]),
+        file_name=str(ytdl_data["title"]),
+        thumb=sedlyf,
+        caption=capy,
+        supports_streaming=True,        
+        reply_to_message_id=message.id 
+    )
+    await pablo.delete()
+    for files in (sedlyf, file_stark):
+        if files and os.path.exists(files):
+            os.remove(files)
