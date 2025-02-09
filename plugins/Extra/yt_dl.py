@@ -1,13 +1,15 @@
 from __future__ import unicode_literals
 import os
-import asyncio
-import requests
-import wget
+import logging
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from youtube_search import YoutubeSearch
 from youtubesearchpython import SearchVideos
 from yt_dlp import YoutubeDL
+
+# Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize Pyrogram Client
 app = Client(
@@ -18,8 +20,9 @@ app = Client(
 )
 
 # Song Downloader
-@app.on_message(filters.command(["song", "mp3"]) & filters.private)
+@app.on_message(filters.command(['song', 'mp3']) & filters.private)
 async def song_downloader(client, message: Message):
+    logger.info(f"Received command: {message.text}")
     try:
         query = " ".join(message.command[1:])
         if not query:
@@ -74,6 +77,7 @@ async def song_downloader(client, message: Message):
         await progress.delete()
 
     except Exception as e:
+        logger.error(f"Error: {str(e)}")
         await progress.edit(f"❌ **Download Failed**\n`{str(e)}`")
     finally:
         # Cleanup
@@ -85,6 +89,7 @@ async def song_downloader(client, message: Message):
 # Video Downloader
 @app.on_message(filters.command(["video", "mp4"]))
 async def video_downloader(client, message: Message):
+    logger.info(f"Received command: {message.text}")
     try:
         query = " ".join(message.command[1:])
         if not query:
@@ -132,6 +137,7 @@ async def video_downloader(client, message: Message):
         await progress.delete()
 
     except Exception as e:
+        logger.error(f"Error: {str(e)}")
         await progress.edit(f"❌ **Download Failed**\n`{str(e)}`")
     finally:
         # Cleanup
@@ -140,6 +146,41 @@ async def video_downloader(client, message: Message):
             if file and os.path.exists(file):
                 os.remove(file)
 
+# Handle Raw YouTube Links
+@app.on_message(filters.regex(r"https?://(www\.)?youtube\.com/watch\?v=[\w-]+|https?://youtu\.be/[\w-]+"))
+async def handle_youtube_link(client, message: Message):
+    logger.info(f"Received YouTube link: {message.text}")
+    try:
+        youtube_url = message.text
+        progress = await message.reply("🔍 **Processing your YouTube link...**")
+        
+        # Download video
+        ydl_opts = {
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
+            "outtmpl": "%(title)s.%(ext)s",
+            "quiet": True
+        }
+        
+        with YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(youtube_url, download=True)
+            video_file = ydl.prepare_filename(info)
+
+        # Send video
+        await progress.edit("📤 **Uploading your video...**")
+        await message.reply_video(
+            video=video_file,
+            caption=f"🎥 **{info['title']}**\n\n➖➖➖➖➖➖➖\n⚡ **Powered By [VJ NETWORKS™](https://t.me/vj_bots)**"
+        )
+        await progress.delete()
+
+    except Exception as e:
+        logger.error(f"Error: {str(e)}")
+        await progress.edit(f"❌ **Download Failed**\n`{str(e)}`")
+    finally:
+        # Cleanup
+        if os.path.exists(video_file):
+            os.remove(video_file)
+
 if __name__ == "__main__":
-    print("⚡ Bot Started!")
+    logger.info("⚡ Bot Started!")
     app.run()
