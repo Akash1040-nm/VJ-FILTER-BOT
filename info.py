@@ -109,7 +109,7 @@ IMDB = bool(environ.get('IMDB', False))
 AUTO_FFILTER = bool(environ.get('AUTO_FFILTER', True))
 AUTO_DELETE = bool(environ.get('AUTO_DELETE', True))
 LONG_IMDB_DESCRIPTION = bool(environ.get("LONG_IMDB_DESCRIPTION", False))
-SPELL_CHECK_REPLY = bool(environ.get("SPELL_CHECK_REPLY", True))
+SPELL_CHECK_REPLY = bool(environ.get("SPELL_CHECK_REPLY", False))
 MELCOW_NEW_USERS = bool(environ.get('MELCOW_NEW_USERS', True))
 PROTECT_CONTENT = bool(environ.get('PROTECT_CONTENT', False))
 PUBLIC_FILE_STORE = bool(environ.get('PUBLIC_FILE_STORE', True))
@@ -131,8 +131,8 @@ VERIFY_SND_SHORTLINK_API = environ.get('VERIFY_SND_SHORTLINK_API', '')
 
 
 # Shortlink Info
-SHORTLINK_MODE = bool(environ.get('SHORTLINK_MODE', False)) # Set True Or False
-SHORTLINK_URL = environ.get('SHORTLINK_URL', 'modijiurl.com')
+SHORTLINK_MODE = bool(environ.get('SHORTLINK_MODE',False)) # Set True Or False
+SHORTLINK_URL = environ.get('SHORTLINK_URL', '')
 SHORTLINK_API = environ.get('SHORTLINK_API', '4ca5c91a78fc8c877a5ca3e79d7f473eb670e2c1')
 TUTORIAL = environ.get('TUTORIAL', 'https://t.me/c/2290511828/3') # How Open Shortner Link Video Link , Channel Link Where You Upload Your Video.
 
