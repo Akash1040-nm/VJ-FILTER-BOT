@@ -94,9 +94,9 @@ PUBLIC_FILE_CHANNEL = environ.get('PUBLIC_FILE_CHANNEL', 'hgdhhvcrdf') # Public 
 
 
 # Links
-GRP_LNK = environ.get('GRP_LNK', 'https://t.me/RK_Movies888')
-CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/RK_Movies8')
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/RK_Movies8') # Support Chat Link Without https:// or @
+GRP_LNK = environ.get('GRP_LNK', 'https://t.me/RK_MoviesG')
+CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/RK_Movies01')
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/RK_Movies01') # Support Chat Link Without https:// or @
 
 
 # True Or False
