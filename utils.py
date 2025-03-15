@@ -636,7 +636,7 @@ async def send_all(bot, userid, files, ident, chat_id, user_name, query):
                             [
                                 [
                                 InlineKeyboardButton('Movie Gʀᴏᴜᴘ', url=f'https://t.me/RK_MoviesG'),
-                                InlineKeyboardButton('Uᴘᴅᴀᴛᴇs Cʜᴀɴɴᴇʟ', url=https://t.me/RK_Movies01)
+                                InlineKeyboardButton('Uᴘᴅᴀᴛᴇs Cʜᴀɴɴᴇʟ', url=https://t.me/RK_Movies01 )
                             ]
 
                             ]
