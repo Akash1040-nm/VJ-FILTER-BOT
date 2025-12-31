@@ -94,7 +94,7 @@ PUBLIC_FILE_CHANNEL = environ.get('PUBLIC_FILE_CHANNEL', 'hgdhhvcrdf') # Public 
 
 
 # Links
-GRP_LNK = environ.get('GRP_LNK', 'https://t.me/RK_MoviesG')
+GRP_LNK = environ.get('GRP_LNK', 'https://t.me/RK_Movies01')
 CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/RK_Movies01')
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 't.me/RK_Movies01') # Support Chat Link Without https:// or @
 
@@ -132,9 +132,9 @@ VERIFY_SND_SHORTLINK_API = environ.get('VERIFY_SND_SHORTLINK_API', '')
 
 # Shortlink Info
 SHORTLINK_MODE = bool(environ.get('SHORTLINK_MODE',False)) # Set True Or False
-SHORTLINK_URL = environ.get('SHORTLINK_URL', '')
-SHORTLINK_API = environ.get('SHORTLINK_API', '4ca5c91a78fc8c877a5ca3e79d7f473eb670e2c1')
-TUTORIAL = environ.get('TUTORIAL', 'https://t.me/c/2290511828/3') # How Open Shortner Link Video Link , Channel Link Where You Upload Your Video.
+SHORTLINK_URL = environ.get('SHORTLINK_URL', 'arolinks.com')
+SHORTLINK_API = environ.get('SHORTLINK_API', 'fb8e448890ccf9a02c094afceed9e5526bc3cc1b')
+TUTORIAL = environ.get('TUTORIAL', 'https://t.me/+nAcXbSrAml9iMDE1') # How Open Shortner Link Video Link , Channel Link Where You Upload Your Video.
 
 
 # Others
@@ -201,3 +201,4 @@ else:
 # Don't Remove Credit @VJ_Botz
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
+
